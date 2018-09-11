@@ -69,7 +69,7 @@ include( ABSPATH . 'wp-admin/admin-header.php' );
 </tr>
 
 <?php if ( !is_multisite() ) { ?>
-
+<?php /* rc_corephp - Commenting this out as these variables are dynamic * / ?>
 <tr>
 <th scope="row"><label for="siteurl"><?php _e('WordPress Address (URL)') ?></label></th>
 <td><input name="siteurl" type="url" id="siteurl" value="<?php form_option( 'siteurl' ); ?>"<?php disabled( defined( 'WP_SITEURL' ) ); ?> class="regular-text code<?php if ( defined( 'WP_SITEURL' ) ) echo ' disabled' ?>" /></td>
@@ -81,7 +81,7 @@ include( ABSPATH . 'wp-admin/admin-header.php' );
 <?php if ( ! defined( 'WP_HOME' ) ) : ?>
 <p class="description" id="home-description"><?php
 	printf(
-		/* translators: %s: Codex URL */
+		//translators: %s: Codex URL 
 		__( 'Enter the address here if you <a href="%s">want your site home page to be different from your WordPress installation directory</a>.' ),
 		__( 'https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory' )
 	);
@@ -89,7 +89,7 @@ include( ABSPATH . 'wp-admin/admin-header.php' );
 <?php endif; ?>
 </td>
 </tr>
-
+<?php /* */ ?>
 <?php } ?>
 
 <tr>
@@ -118,7 +118,7 @@ if ( $new_admin_email && $new_admin_email != get_option( 'admin_email' ) ) : ?>
 </tr>
 
 <?php if ( ! is_multisite() ) { ?>
-
+<?php /* rc_corephp - Commenting this out as this is handled through Joomla * / ?>
 <tr>
 <th scope="row"><?php _e('Membership') ?></th>
 <td> <fieldset><legend class="screen-reader-text"><span><?php _e('Membership') ?></span></legend><label for="users_can_register">
@@ -126,7 +126,7 @@ if ( $new_admin_email && $new_admin_email != get_option( 'admin_email' ) ) : ?>
 <?php _e('Anyone can register') ?></label>
 </fieldset></td>
 </tr>
-
+<?php /* */ ?>
 <tr>
 <th scope="row"><label for="default_role"><?php _e('New User Default Role') ?></label></th>
 <td>

@@ -298,13 +298,14 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 
 <?php submit_button(); ?>
   </form>
+	<?php /* rc_corephp - handled through Joomla -BUR * / ?>  
 <?php if ( !is_multisite() ) { ?>
 <?php if ( $iis7_permalinks ) :
 	if ( isset($_POST['submit']) && $permalink_structure && ! $using_index_permalinks && ! $writable ) :
 		if ( file_exists($home_path . 'web.config') ) : ?>
 <p><?php
 	printf(
-		/* translators: 1: web.config, 2: Codex URL, 3: CTRL + a, 4: element code */
+		//translators: 1: web.config, 2: Codex URL, 3: CTRL + a, 4: element code
 		__( 'If your %1$s file was <a href="%2$s">writable</a>, we could do this automatically, but it isn&#8217;t so this is the url rewrite rule you should have in your %1$s file. Click in the field and press %3$s to select all. Then insert this rule inside of the %4$s element in %1$s file.' ),
 		'<code>web.config</code>',
 		__( 'https://codex.wordpress.org/Changing_File_Permissions' ),
@@ -318,7 +319,7 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 </form>
 <p><?php
 	printf(
-		/* translators: %s: web.config */
+		//translators: %s: web.config
 		__( 'If you temporarily make your %s file writable for us to generate rewrite rules automatically, do not forget to revert the permissions after rule has been saved.' ),
 		'<code>web.config</code>'
 	);
@@ -326,7 +327,7 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 		<?php else : ?>
 <p><?php
 	printf(
-		/* translators: 1: Codex URL, 2: web.config, 3: CTRL + a */
+		//translators: 1: Codex URL, 2: web.config, 3: CTRL + a
 		__( 'If the root directory of your site was <a href="%1$s">writable</a>, we could do this automatically, but it isn&#8217;t so this is the url rewrite rule you should have in your %2$s file. Create a new file, called %2$s in the root directory of your site. Click in the field and press %3$s to select all. Then insert this code into the %2$s file.' ),
 		__( 'https://codex.wordpress.org/Changing_File_Permissions' ),
 		'<code>web.config</code>',
@@ -339,7 +340,7 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 </form>
 <p><?php
 	printf(
-		/* translators: %s: web.config */
+		//translators: %s: web.config
 		__( 'If you temporarily make your site&#8217;s root directory writable for us to generate the %s file automatically, do not forget to revert the permissions after the file has been created.' ),
 		'<code>web.config</code>'
 	);
@@ -352,7 +353,7 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 	if ( $permalink_structure && ! $using_index_permalinks && ! $writable && $update_required ) : ?>
 <p><?php
 	printf(
-		/* translators: 1: .htaccess, 2: Codex URL, 3: CTRL + a */
+		//translators: 1: .htaccess, 2: Codex URL, 3: CTRL + a
 		__( 'If your %1$s file was <a href="%2$s">writable</a>, we could do this automatically, but it isn&#8217;t so these are the mod_rewrite rules you should have in your %1$s file. Click in the field and press %3$s to select all.' ),
 		'<code>.htaccess</code>',
 		__( 'https://codex.wordpress.org/Changing_File_Permissions' ),
@@ -366,7 +367,7 @@ printf( __( 'If you like, you may enter custom structures for your category and 
 	<?php endif; ?>
 <?php endif; ?>
 <?php } // multisite ?>
-
+<?php /* */ ?>
 </div>
 
 <?php require( ABSPATH . 'wp-admin/admin-footer.php' ); ?>

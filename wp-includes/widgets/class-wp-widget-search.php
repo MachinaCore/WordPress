@@ -40,6 +40,9 @@ class WP_Widget_Search extends WP_Widget {
 	 * @param array $instance Settings for the current Search widget instance.
 	 */
 	public function widget( $args, $instance ) {
+		/* rc_corephp - Getting the template club for use later */
+		$template_company = get_site_option( 'wpj_template_club', '' );
+
 		$title = ! empty( $instance['title'] ) ? $instance['title'] : '';
 
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
@@ -48,6 +51,19 @@ class WP_Widget_Search extends WP_Widget {
 		echo $args['before_widget'];
 		if ( $title ) {
 			echo $args['before_title'] . $title . $args['after_title'];
+		}
+		/* rc_corephp - Added fix for ending div tag on rockettheme templates */
+		else {
+			if(( 'rockettheme' == $template_company ) || ( 'rockettheme_gantry_1' == $template_company )) {
+				$args['after_widget'] = str_replace( '</div></div>', '</div>', $args['after_widget'] );
+			} elseif( 'yootheme' == $template_company ) {
+			} elseif( 'joomlashack' == $template_company ) {
+					$args['after_widget'] = str_replace( '</div></div></div>', '</div>', $args['after_widget'] );
+			} elseif( 'joomlapraise' == $template_company ) {
+					$args['after_widget'] = str_replace( '</div></div></div>', '</div>', $args['after_widget'] );			
+			} else {
+				$args['after_widget'] = str_replace( '</div></div></div></div></div>', '</div>', $args['after_widget'] );
+			}
 		}
 
 		// Use current theme search form if it exists

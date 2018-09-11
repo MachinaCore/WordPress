@@ -45,6 +45,9 @@ function list_core_update( $update ) {
  	else
  		$version_string = sprintf( "%s&ndash;<strong>%s</strong>", $update->current, $update->locale );
 
+	/* rc_corephp - Override version string, to avoid confusion in Joomla */
+ 	$version_string = $update->current;
+	
 	$current = false;
 	if ( !isset($update->response) || 'latest' == $update->response )
 		$current = true;
@@ -84,6 +87,7 @@ function list_core_update( $update ) {
 		}
 	}
 
+	/* rc_corephp No need for update button * /
 	echo '<p>';
 	echo $message;
 	echo '</p>';
@@ -113,7 +117,7 @@ function list_core_update( $update ) {
 	    echo '<p class="hint">'.sprintf( __('You are about to install WordPress %s <strong>in English (US).</strong> There is a chance this update will break your translation. You may prefer to wait for the localized version to be released.'), $update->response != 'development' ? $update->current : '' ).'</p>';
 	}
 	echo '</form>';
-
+	/* */
 }
 
 /**
@@ -205,6 +209,7 @@ function core_upgrade_preamble() {
 		echo '</li>';
 	}
 	echo '</ul>';
+	/* rc_corephp - We don't want to display this message * /
 	// Don't show the maintenance mode notice when we are only showing a single re-install option.
 	if ( $updates && ( count( $updates ) > 1 || $updates[0]->response != 'latest' ) ) {
 		echo '<p>' . __( 'While your site is being updated, it will be in maintenance mode. As soon as your updates are complete, your site will return to normal.' ) . '</p>';
@@ -212,6 +217,7 @@ function core_upgrade_preamble() {
 		list( $normalized_version ) = explode( '-', $wp_version );
 		echo '<p>' . sprintf( __( '<a href="%s">Learn more about WordPress %s</a>.' ), esc_url( self_admin_url( 'about.php' ) ), $normalized_version ) . '</p>';
 	}
+	/* */
 	dismissed_updates();
 }
 
@@ -344,6 +350,8 @@ function list_plugin_updates() {
  * @since 2.9.0
  */
 function list_theme_updates() {
+/* rc_corephp We do not want people updating themes */
+	return;	
 	$themes = get_theme_updates();
 	if ( empty( $themes ) ) {
 		echo '<h2>' . __( 'Themes' ) . '</h2>';
@@ -612,11 +620,15 @@ if ( 'upgrade-core' == $action ) {
 		$last_update_check = $current->last_checked + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 	}
 
+	/* rc_corephp no updates via wordpress * /
 	echo '<p>';
+	/* */
 	/* translators: %1 date, %2 time. */
+	/* rc_corephp no updates via wordpress * /
 	printf( __( 'Last checked on %1$s at %2$s.' ), date_i18n( __( 'F j, Y' ), $last_update_check ), date_i18n( __( 'g:i a' ), $last_update_check ) );
 	echo ' &nbsp; <a class="button" href="' . esc_url( self_admin_url('update-core.php?force-check=1') ) . '">' . __( 'Check Again' ) . '</a>';
 	echo '</p>';
+	/* */
 
 	if ( current_user_can( 'update_core' ) ) {
 		core_upgrade_preamble();
@@ -726,6 +738,8 @@ if ( 'upgrade-core' == $action ) {
 	$url = wp_nonce_url($url, 'bulk-update-themes');
 
 	$title = __('Update Themes');
+	/* rc_corephp - Die here as we never want this to happen */
+	die( 'You cannot automatically install WordPress due to the nature of this integration' );
 
 	require_once(ABSPATH . 'wp-admin/admin-header.php');
 	?>

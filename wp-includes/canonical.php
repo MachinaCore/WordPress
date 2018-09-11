@@ -639,6 +639,11 @@ function redirect_guess_404_permalink() {
 	return false;
 }
 
+// rc_corephp
+if ( !isset( $_SERVER['WP_REQUEST_URI'] ) ) {
+	add_action('template_redirect', 'redirect_canonical');
+}
+
 /**
  * Redirects a variety of shorthand URLs to the admin.
  *

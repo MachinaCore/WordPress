@@ -169,6 +169,8 @@ class WP {
 			list( $req_uri ) = explode( '?', $_SERVER['REQUEST_URI'] );
 			$self = $_SERVER['PHP_SELF'];
 			$home_path = trim( parse_url( home_url(), PHP_URL_PATH ), '/' );
+			/* rc_corephp - Fix for URLs with .html and installed in sub directory */
+			$home_path = str_replace( '.html', '', $home_path );			
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
 			// Trim path info from the end and the leading home path from the
@@ -668,6 +670,12 @@ class WP {
 			}
 		}
 
+		/* rc_corephp - Fix for pagination not working in everyhome template */
+		if ( is_paged() && is_multisite() && 'everyhome' == get_option( 'template' ) ) {
+			return;
+		}
+		/* end rc_corephp */		
+		
 		// We will 404 for paged queries, as no posts were found.
 		if ( ! is_paged() ) {
 

@@ -198,6 +198,9 @@ function insert_with_markers( $filename, $marker, $insertion ) {
  * @return bool|null True on write success, false on failure. Null in multisite.
  */
 function save_mod_rewrite_rules() {
+/* rc_corephp - We don't want WordPress adding anything to our joomla htaccess */
+	return; // ALWAYS!
+	
 	if ( is_multisite() )
 		return;
 

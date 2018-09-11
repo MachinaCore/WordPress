@@ -25,6 +25,9 @@ if ( is_multisite() ) {
 	);
 }
 
+/* rc_corephp - We never want a user to be created through WordPress */
+wp_redirect( 'users.php' );
+
 if ( is_multisite() ) {
 	add_filter( 'wpmu_signup_user_notification_email', 'admin_created_user_email' );
 }

@@ -85,7 +85,9 @@ function wp_install( $blog_title, $user_name, $user_email, $public, $deprecated 
 	} else {
 		$message = __('User already exists. Password inherited.');
 	}
-
+	
+	/* rc_corephp - Create WP user based on Joomlas user */
+	$juser = JFactory::getUser();
 	$user = new WP_User($user_id);
 	$user->set_role('administrator');
 
@@ -94,6 +96,9 @@ function wp_install( $blog_title, $user_name, $user_email, $public, $deprecated 
 	wp_install_maybe_enable_pretty_permalinks();
 
 	flush_rewrite_rules();
+	
+	/* rc_corephp - Edited the $guessurl to contain the path to the new blog */
+	$guessurl_mail = $guessurl . '/index.php?option=com_wordpress';	
 
 	wp_new_blog_notification($blog_title, $guessurl, $user_id, ($email_password ? $user_password : __('The password you chose during installation.') ) );
 
