@@ -6,8 +6,8 @@
  * in the theme as custom template tags. Others are attached to action and
  * filter hooks in WordPress to change core functionality.
  *
- * When using a child theme (see https://codex.wordpress.org/Theme_Development and
- * https://codex.wordpress.org/Child_Themes), you can override certain functions
+ * When using a child theme (see http://codex.wordpress.org/Theme_Development and
+ * http://codex.wordpress.org/Child_Themes), you can override certain functions
  * (those wrapped in a function_exists() call) by defining them first in your child theme's
  * functions.php file. The child theme's functions.php file is included before the parent
  * theme's file, so the child theme functions would be used.
@@ -15,7 +15,7 @@
  * Functions that are not pluggable (not wrapped in function_exists()) are instead attached
  * to a filter or action hook.
  *
- * For more information on hooks, actions, and filters, @link https://codex.wordpress.org/Plugin_API
+ * For more information on hooks, actions, and filters, @link http://codex.wordpress.org/Plugin_API
  *
  * @package WordPress
  * @subpackage Twenty_Twelve
@@ -45,11 +45,11 @@ function twentytwelve_setup() {
 	/*
 	 * Makes Twenty Twelve available for translation.
 	 *
-	 * Translations can be filed at WordPress.org. See: https://translate.wordpress.org/projects/wp-themes/twentytwelve
+	 * Translations can be added to the /languages/ directory.
 	 * If you're building a theme based on Twenty Twelve, use a find and replace
 	 * to change 'twentytwelve' to the name of your theme in all the template files.
 	 */
-	load_theme_textdomain( 'twentytwelve' );
+	load_theme_textdomain( 'twentytwelve', get_template_directory() . '/languages' );
 
 	// This theme styles the visual editor with editor-style.css to match the theme style.
 	add_editor_style();
@@ -74,9 +74,6 @@ function twentytwelve_setup() {
 	// This theme uses a custom image size for featured images, displayed on "standard" posts.
 	add_theme_support( 'post-thumbnails' );
 	set_post_thumbnail_size( 624, 9999 ); // Unlimited height, soft crop
-
-	// Indicate widget sidebars can use selective refresh in the Customizer.
-	add_theme_support( 'customize-selective-refresh-widgets' );
 }
 add_action( 'after_setup_theme', 'twentytwelve_setup' );
 
@@ -116,20 +113,23 @@ function twentytwelve_get_font_url() {
 		elseif ( 'vietnamese' == $subset )
 			$subsets .= ',vietnamese';
 
+		$protocol = is_ssl() ? 'https' : 'http';
 		$query_args = array(
 			'family' => 'Open+Sans:400italic,700italic,400,700',
 			'subset' => $subsets,
 		);
-		$font_url = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
+		$font_url = add_query_arg( $query_args, "$protocol://fonts.googleapis.com/css" );
 	}
 
 	return $font_url;
 }
 
 /**
- * Enqueue scripts and styles for front end.
+ * Enqueue scripts and styles for front-end.
  *
  * @since Twenty Twelve 1.0
+ *
+ * @return void
  */
 function twentytwelve_scripts_styles() {
 	global $wp_styles;
@@ -142,7 +142,7 @@ function twentytwelve_scripts_styles() {
 		wp_enqueue_script( 'comment-reply' );
 
 	// Adds JavaScript for handling the navigation menu hide-and-show behavior.
-	wp_enqueue_script( 'twentytwelve-navigation', get_template_directory_uri() . '/js/navigation.js', array( 'jquery' ), '20140711', true );
+	wp_enqueue_script( 'twentytwelve-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '1.0', true );
 
 	$font_url = twentytwelve_get_font_url();
 	if ( ! empty( $font_url ) )
@@ -156,31 +156,6 @@ function twentytwelve_scripts_styles() {
 	$wp_styles->add_data( 'twentytwelve-ie', 'conditional', 'lt IE 9' );
 }
 add_action( 'wp_enqueue_scripts', 'twentytwelve_scripts_styles' );
-
-/**
- * Add preconnect for Google Fonts.
- *
- * @since Twenty Twelve 2.2
- *
- * @param array   $urls          URLs to print for resource hints.
- * @param string  $relation_type The relation type the URLs are printed.
- * @return array URLs to print for resource hints.
- */
-function twentytwelve_resource_hints( $urls, $relation_type ) {
-	if ( wp_style_is( 'twentytwelve-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
-		if ( version_compare( $GLOBALS['wp_version'], '4.7-alpha', '>=' ) ) {
-			$urls[] = array(
-				'href' => 'https://fonts.gstatic.com',
-				'crossorigin',
-			);
-		} else {
-			$urls[] = 'https://fonts.gstatic.com';
-		}
-	}
-
-	return $urls;
-}
-add_filter( 'wp_resource_hints', 'twentytwelve_resource_hints', 10, 2 );
 
 /**
  * Filter TinyMCE CSS path to include Google Fonts.
@@ -228,7 +203,7 @@ function twentytwelve_wp_title( $title, $sep ) {
 		return $title;
 
 	// Add the site name.
-	$title .= get_bloginfo( 'name', 'display' );
+	$title .= get_bloginfo( 'name' );
 
 	// Add the site description for the home/front page.
 	$site_description = get_bloginfo( 'description', 'display' );
@@ -236,7 +211,7 @@ function twentytwelve_wp_title( $title, $sep ) {
 		$title = "$title $sep $site_description";
 
 	// Add a page number if necessary.
-	if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() )
+	if ( $paged >= 2 || $page >= 2 )
 		$title = "$title $sep " . sprintf( __( 'Page %s', 'twentytwelve' ), max( $paged, $page ) );
 
 	return $title;
@@ -306,12 +281,14 @@ if ( ! function_exists( 'twentytwelve_content_nav' ) ) :
 function twentytwelve_content_nav( $html_id ) {
 	global $wp_query;
 
+	$html_id = esc_attr( $html_id );
+
 	if ( $wp_query->max_num_pages > 1 ) : ?>
-		<nav id="<?php echo esc_attr( $html_id ); ?>" class="navigation" role="navigation">
+		<nav id="<?php echo $html_id; ?>" class="navigation" role="navigation">
 			<h3 class="assistive-text"><?php _e( 'Post navigation', 'twentytwelve' ); ?></h3>
 			<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentytwelve' ) ); ?></div>
 			<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?></div>
-		</nav><!-- .navigation -->
+		</nav><!-- #<?php echo $html_id; ?> .navigation -->
 	<?php endif;
 }
 endif;
@@ -326,6 +303,8 @@ if ( ! function_exists( 'twentytwelve_comment' ) ) :
  * Used as a callback by wp_list_comments() for displaying the comments.
  *
  * @since Twenty Twelve 1.0
+ *
+ * @return void
  */
 function twentytwelve_comment( $comment, $args, $depth ) {
 	$GLOBALS['comment'] = $comment;
@@ -346,7 +325,8 @@ function twentytwelve_comment( $comment, $args, $depth ) {
 		<article id="comment-<?php comment_ID(); ?>" class="comment">
 			<header class="comment-meta comment-author vcard">
 				<?php
-					echo get_avatar( $comment, 44 );
+				echo getSocialAvatar($comment, 44 ); // rc_corephp
+					//echo get_avatar( $comment, 44 );
 					printf( '<cite><b class="fn">%1$s</b> %2$s</cite>',
 						get_comment_author_link(),
 						// If current post author is also comment author, make it known visually.
@@ -389,6 +369,8 @@ if ( ! function_exists( 'twentytwelve_entry_meta' ) ) :
  * Create your own twentytwelve_entry_meta() to override in a child theme.
  *
  * @since Twenty Twelve 1.0
+ *
+ * @return void
  */
 function twentytwelve_entry_meta() {
 	// Translators: used between list items, there is a space after the comma.
@@ -486,6 +468,8 @@ add_filter( 'body_class', 'twentytwelve_body_class' );
  * templates, and when there are no active widgets in the sidebar.
  *
  * @since Twenty Twelve 1.0
+ *
+ * @return void
  */
 function twentytwelve_content_width() {
 	if ( is_page_template( 'page-templates/full-width.php' ) || is_attachment() || ! is_active_sidebar( 'sidebar-1' ) ) {
@@ -503,50 +487,14 @@ add_action( 'template_redirect', 'twentytwelve_content_width' );
  * @since Twenty Twelve 1.0
  *
  * @param WP_Customize_Manager $wp_customize Customizer object.
+ * @return void
  */
 function twentytwelve_customize_register( $wp_customize ) {
 	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
 	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
 	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
-
-	if ( isset( $wp_customize->selective_refresh ) ) {
-		$wp_customize->selective_refresh->add_partial( 'blogname', array(
-			'selector' => '.site-title > a',
-			'container_inclusive' => false,
-			'render_callback' => 'twentytwelve_customize_partial_blogname',
-		) );
-		$wp_customize->selective_refresh->add_partial( 'blogdescription', array(
-			'selector' => '.site-description',
-			'container_inclusive' => false,
-			'render_callback' => 'twentytwelve_customize_partial_blogdescription',
-		) );
-	}
 }
 add_action( 'customize_register', 'twentytwelve_customize_register' );
-
-/**
- * Render the site title for the selective refresh partial.
- *
- * @since Twenty Twelve 2.0
- * @see twentytwelve_customize_register()
- *
- * @return void
- */
-function twentytwelve_customize_partial_blogname() {
-	bloginfo( 'name' );
-}
-
-/**
- * Render the site tagline for the selective refresh partial.
- *
- * @since Twenty Twelve 2.0
- * @see twentytwelve_customize_register()
- *
- * @return void
- */
-function twentytwelve_customize_partial_blogdescription() {
-	bloginfo( 'description' );
-}
 
 /**
  * Enqueue Javascript postMessage handlers for the Customizer.
@@ -554,28 +502,69 @@ function twentytwelve_customize_partial_blogdescription() {
  * Binds JS handlers to make the Customizer preview reload changes asynchronously.
  *
  * @since Twenty Twelve 1.0
+ *
+ * @return void
  */
 function twentytwelve_customize_preview_js() {
-	wp_enqueue_script( 'twentytwelve-customizer', get_template_directory_uri() . '/js/theme-customizer.js', array( 'customize-preview' ), '20141120', true );
+	wp_enqueue_script( 'twentytwelve-customizer', get_template_directory_uri() . '/js/theme-customizer.js', array( 'customize-preview' ), '20130301', true );
 }
 add_action( 'customize_preview_init', 'twentytwelve_customize_preview_js' );
 
-
-/**
- * Modifies tag cloud widget arguments to display all tags in the same font size
- * and use list format for better accessibility.
- *
- * @since Twenty Twelve 2.4
- *
- * @param array $args Arguments for tag cloud widget.
- * @return array The filtered arguments for tag cloud widget.
- */
-function twentytwelve_widget_tag_cloud_args( $args ) {
-	$args['largest']  = 22;
-	$args['smallest'] = 8;
-	$args['unit']     = 'pt';
-	$args['format']   = 'list';
-
-	return $args;
+function twentytwelve_theme_fixes() {
+	if( JFactory::getApplication()->getTemplate() == 'purity_iii' && is_user_logged_in() ) { ?>
+		<script type='text/javascript'>
+			jQuery( 'body' ).addClass( 'purity_iii_header_fix' );
+		</script>
+	<?php
+	}
 }
-add_filter( 'widget_tag_cloud_args', 'twentytwelve_widget_tag_cloud_args' );
+
+if ( ! function_exists( 'twentytwelve_posted_on' ) ) :
+/**
+ * Prints HTML with meta information for the current post—date/time and author.
+ *
+ * @since Twenty Ten 1.0
+ */
+function twentytwelve_posted_on() {
+	printf( __( '<span class="%1$s">Posted on</span> %2$s <span class="meta-sep">by</span> %3$s', 'twentyten' ),
+		'meta-prep meta-prep-author',
+		sprintf( '<a href="%1$s" title="%2$s" rel="bookmark"><span class="entry-date createdate updated">%3$s</span></a>',
+			get_permalink(),
+			esc_attr( get_the_time() ),
+			get_the_date()
+		),
+		sprintf( '<span class="author createby vcard"><a class="url fn n" href="%1$s" title="%2$s">%3$s</a></span>',
+			get_author_posts_url( get_the_author_meta( 'ID' ) ),
+			esc_attr( sprintf( __( 'View all posts by %s', 'twentyten' ), get_the_author() ) ),
+			get_the_author()
+		)
+	);
+}
+endif;
+
+if ( ! function_exists( 'twentytwelve_posted_in' ) ) :
+/**
+ * Prints HTML with meta information for the current post (category, tags and permalink).
+ *
+ * @since Twenty Ten 1.0
+ */
+function twentytwelve_posted_in() {
+	// Retrieves tag list of current post, separated by commas.
+	$tag_list = get_the_tag_list( '', ', ' );
+	if ( $tag_list ) {
+		$posted_in = __( 'This entry was posted in %1$s and tagged %2$s. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyten' );
+	} elseif ( is_object_in_taxonomy( get_post_type(), 'category' ) ) {
+		$posted_in = __( 'This entry was posted in %1$s. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyten' );
+	} else {
+		$posted_in = __( 'Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyten' );
+	}
+	// Prints the string, replacing the placeholders.
+	printf(
+		$posted_in,
+		get_the_category_list( ', ' ),
+		$tag_list,
+		get_permalink(),
+		the_title_attribute( 'echo=0' )
+	);
+}
+endif;

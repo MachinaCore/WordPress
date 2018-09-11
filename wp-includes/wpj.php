@@ -117,9 +117,9 @@ function wp_authenticate_joomla_admin( $_var )
 
 	// Process WordPress auto login
 	$user = new WP_User( $juser->id );
-	wp_set_current_user( $user->ID, $user->user_login );
+	wp_set_current_user( $user->ID, $user->user_login, $user );
 	wp_set_auth_cookie( $user->ID );
-	do_action( 'wp_login', $user->username );
+	do_action( 'wp_login', $user->username, $user );
 
 	$uri = JFactory::getURI();
 	$mainframe->redirect( $uri->toString(

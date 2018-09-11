@@ -9,9 +9,8 @@
 
 get_header(); ?>
 
-	<div id="primary" class="site-content">
+	<div id="primary" class="site-content <?php if( !get_site_option( 'wpj_use_wp_sidebar', 1 ) ) { echo 'full'; } ?> ">
 		<div id="content" role="main">
-
 			<?php while ( have_posts() ) : the_post(); ?>
 
 				<?php get_template_part( 'content', get_post_format() ); ?>

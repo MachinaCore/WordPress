@@ -7,7 +7,7 @@
  * It is used to display a page when nothing more specific matches a query.
  * For example, it puts together the home page when no home.php file exists.
  *
- * @link https://codex.wordpress.org/Template_Hierarchy
+ * @link http://codex.wordpress.org/Template_Hierarchy
  *
  * @package WordPress
  * @subpackage Twenty_Twelve
@@ -16,7 +16,7 @@
 
 get_header(); ?>
 
-	<div id="primary" class="site-content">
+	<div id="primary" class="site-content <?php if( !get_site_option( 'wpj_use_wp_sidebar', 1 ) ) { echo 'full'; } ?> ">
 		<div id="content" role="main">
 		<?php if ( have_posts() ) : ?>
 
@@ -35,7 +35,7 @@ get_header(); ?>
 				// Show a different message to a logged-in user who can add posts.
 			?>
 				<header class="entry-header">
-					<h1 class="entry-title"><?php _e( 'No posts to display', 'twentytwelve' ); ?></h1>
+					<h2 class="entry-title"><?php _e( 'No posts to display', 'twentytwelve' ); ?></h2>
 				</header>
 
 				<div class="entry-content">
@@ -46,7 +46,7 @@ get_header(); ?>
 				// Show the default message to everyone else.
 			?>
 				<header class="entry-header">
-					<h1 class="entry-title"><?php _e( 'Nothing Found', 'twentytwelve' ); ?></h1>
+					<h2 class="entry-title"><?php _e( 'Nothing Found', 'twentytwelve' ); ?></h2>
 				</header>
 
 				<div class="entry-content">

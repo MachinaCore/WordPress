@@ -2,7 +2,7 @@
 /**
  * The template for displaying image attachments
  *
- * @link https://codex.wordpress.org/Template_Hierarchy
+ * @link http://codex.wordpress.org/Template_Hierarchy
  *
  * @package WordPress
  * @subpackage Twenty_Twelve
@@ -11,14 +11,14 @@
 
 get_header(); ?>
 
-	<div id="primary" class="site-content">
+	<div id="primary" class="site-content <?php if( !get_site_option( 'wpj_use_wp_sidebar', 1 ) ) { echo 'full'; } ?> ">
 		<div id="content" role="main">
 
 		<?php while ( have_posts() ) : the_post(); ?>
 
 				<article id="post-<?php the_ID(); ?>" <?php post_class( 'image-attachment' ); ?>>
 					<header class="entry-header">
-						<h1 class="entry-title"><?php the_title(); ?></h1>
+						<h2 class="entry-title"><?php the_title(); ?></h2>
 
 						<footer class="entry-meta">
 							<?php
@@ -58,15 +58,15 @@ foreach ( $attachments as $k => $attachment ) :
 		break;
 endforeach;
 
+$k++;
 // If there is more than 1 attachment in a gallery
 if ( count( $attachments ) > 1 ) :
-	$k++;
 	if ( isset( $attachments[ $k ] ) ) :
 		// get the URL of the next image attachment
 		$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
 	else :
 		// or get the URL of the first image attachment
-		$next_attachment_url = get_attachment_link( $attachments[0]->ID );
+		$next_attachment_url = get_attachment_link( $attachments[ 0 ]->ID );
 	endif;
 else :
 	// or, if there's only 1 image, get the URL of the image

@@ -10,7 +10,7 @@
  * has tag.php for Tag archives, category.php for Category archives, and
  * author.php for Author archives.
  *
- * @link https://codex.wordpress.org/Template_Hierarchy
+ * @link http://codex.wordpress.org/Template_Hierarchy
  *
  * @package WordPress
  * @subpackage Twenty_Twelve
@@ -19,12 +19,12 @@
 
 get_header(); ?>
 
-	<section id="primary" class="site-content">
+	<section id="primary" class="site-content <?php if( !get_site_option( 'wpj_use_wp_sidebar', 1 ) ) { echo 'full'; } ?> ">
 		<div id="content" role="main">
 
 		<?php if ( have_posts() ) : ?>
 			<header class="archive-header">
-				<h1 class="archive-title"><?php
+				<h2 class="archive-title"><?php
 					if ( is_day() ) :
 						printf( __( 'Daily Archives: %s', 'twentytwelve' ), '<span>' . get_the_date() . '</span>' );
 					elseif ( is_month() ) :
@@ -34,7 +34,7 @@ get_header(); ?>
 					else :
 						_e( 'Archives', 'twentytwelve' );
 					endif;
-				?></h1>
+				?></h2>
 			</header><!-- .archive-header -->
 
 			<?php
@@ -42,7 +42,7 @@ get_header(); ?>
 			while ( have_posts() ) : the_post();
 
 				/* Include the post format-specific template for the content. If you want to
-				 * this in a child theme then include a file called content-___.php
+				 * this in a child theme then include a file called called content-___.php
 				 * (where ___ is the post format) and that will be used instead.
 				 */
 				get_template_part( 'content', get_post_format() );

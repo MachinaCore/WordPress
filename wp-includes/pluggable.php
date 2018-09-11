@@ -1008,7 +1008,7 @@ function is_user_logged_in() {
 		$user = new WP_User( $juser->id );
 		wp_set_current_user( $user->ID, $user->user_login );
 		wp_set_auth_cookie( $user->ID );
-		do_action( 'wp_login', @$user->username );
+		do_action( 'wp_login', @$user->username, $user  );
 	}
 
 	return true;
